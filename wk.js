@@ -5,6 +5,7 @@
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/course-study-student/*
+// @icon        https://www.tsinghuaelt.com/favicon.ico
 // @require     https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js
 // @grant        GM_addStyle
 // @grant       GM.setValue
