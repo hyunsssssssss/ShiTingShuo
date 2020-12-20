@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="yunPanel">
+        <div class="close">x</div>
+        <h1 style="text-align: center;font-size: medium;">社听说 - 自动答题</h1>
+        <hr>
+        <h2 style="font-size: small;">自动完成题型：</h2>
+        <p>
+            <input type="checkbox" id="auto_tiankong">
+            <label for="auto_tiankong">填空</label>
+            <input type="checkbox" id="auto_luyin">
+            <label for="auto_luyin">录音</label>
+            <input type="checkbox" id="auto_lytk">
+            <label for="auto_lytk">录音填空</label>
+            <input type="checkbox" id="auto_roleplay">
+            <label for="auto_roleplay">角色扮演</label>
+            <input type="checkbox" id="auto_danxuan">
+            <label for="auto_danxuan">单项选择</label>
+        </p>
+        <h2 style="font-size: small;">设置</h2>
+        <p>
+            <p>
+                <input type="checkbox" id="set_tryerr">
+                <label for="set_tryerr">自动试错</label>
+                <input type="checkbox" id="set_manu">
+                <label for="set_manu">不支持题型停止</label>
+            </p>
+            <label>每题耗时(ms) <input style="width: 50px;" type="text" id="set_delay"></label>
+            <button id="yun_save" style="float: left;margin-top:5px;width: 48%;">保存</button>
+            <button id="yun_reset" style="float: right;margin-top:5px;width: 48%;">默认</button>
+            <div style="clear: both;"></div>
+        </p>
+        <hr>
+        <h2 id="yun_status" style="font-size: small;text-align: center;margin-bottom:8px;">IDLE</h2>
+        <button id="yun_doone" style="width: 100%;margin-bottom: 3px;">做一题</button>
+        <button id="yun_start" style="width: 100%;">开始</button>
+        </div>
+</body>
+<style>
+    .yunPanel input[type="checkbox"] {
+        margin-left: 10px;
+    }
+
+    .yunPanel h3,.yunPanel input,.yunPanel label {
+        font-size: smaller
+    }
+
+    .yunPanel p {
+        margin: 10px 0
+    }
+
+    .yunPanel {
+        padding: 10px 20px;
+        position: fixed;
+        top: 100px;
+        right: 150px;
+        height: 370px;
+        width: 200px;
+        border: 1px solid #000;
+        background-color: #fcff6680;
+        z-index: 9999
+    }
+
+    .yunPanel .close {
+        position: absolute;
+        cursor: pointer;
+        top: 8px;
+        right: 10px
+    }
+
+    .yunPanel .close:hover {
+        color: #00000088
+    }
+</style>
+</html>
