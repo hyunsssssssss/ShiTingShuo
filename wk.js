@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         清华社视听说 - 自动答题
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/course-study-student/*
@@ -24,7 +24,7 @@
     let sleep = (ms)=> { return new Promise(resolve => setTimeout(resolve, ms)); }
     let click_btn = ()=> { $('.wy-course-bottom .wy-course-btn-right .wy-btn').click(); }
     let config = {
-        'autodo': ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan'],
+        'autodo': ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose'],
         'autotryerr': true,
         'autostop': false,
         'delay': 10000
@@ -66,9 +66,9 @@
         if($('img[title="录音"]').length!=0 && config.autodo.includes('auto_luyin')) {
             await setTixing('录音');
             await doReadRepeat();
-        } else if($('.lib-textarea-container').length!=0 && config.autodo.includes('auto_lytk')) {
-            await setTixing('听力填空');
-            await doListenAnswer();
+        } else if($('.lib-textarea-container, .img-blank-answer').length!=0 && config.autodo.includes('auto_lytk')) {
+            await setTixing('听力/图片填空');
+            await doListenImgAnswer();
         } else if($('.lib-fill-blank-do-input-left').length!=0 && config.autodo.includes('auto_tiankong')) {
             await setTixing('填空');
             await doTianKone();
@@ -78,6 +78,9 @@
         } else if($('.lib-role-select-item').length!=0 && config.autodo.includes('auto_roleplay')) {
             await setTixing('角色扮演');
             await doRolePlay();
+        } else if($('.ant-select-dropdown-menu-item').length!=0 && config.autodo.includes('auto_dropchoose')) {
+            await setTixing('下拉选择');
+            await doDropChoose();
         } else {
             await unSupposedOrSkip();
             return false;
@@ -103,7 +106,7 @@
 
         let answer = [], anyAnswer = false;
         $('.lib-edit-score span[data-type="1"]').each((i,item)=>{
-            if(item.innerText.toLowerCase().indexOf('may vary')!=-1) {
+            if(item.innerText.toLowerCase().indexOf('vary')!=-1) {
                 // 任意填空
                 anyAnswer = true;
                 return false;
@@ -184,6 +187,37 @@
         click_btn(); // Submit
     }
 
+    // 下拉选择题
+    async function doDropChoose() {
+
+        // 随机选择以获得正确答案
+        $('.ant-select-dropdown-menu-item').click();
+        
+        await sleep(500);
+        click_btn(); // Submit
+        await sleep(2000);
+
+        let answer = [];
+        $('.wy-lib-cs-key + span').each((i,item)=>{
+            answer.push(item.innerText)
+        });
+        
+        click_btn(); // Retry
+        await sleep(2000);
+
+        $('.ant-select-dropdown-menu').each((i,div)=>{
+            $(div).find('li').each((index, item)=>{
+                if($.trim(item.innerText) == answer[i]) {
+                    $(item).click();
+                    return false;
+                }
+            });
+        });
+
+        await sleep(500);
+        click_btn(); // Submit
+    }
+
     // 角色扮演
     async function doRolePlay() {
         $('.lib-role-select-item img')[0].click()
@@ -193,9 +227,9 @@
         click_btn(); // Submit
     }
 
-    // 听力填空
-    async function doListenAnswer() {
-        let inputs = $('.lib-textarea-container');
+    // 听力/图片填空
+    async function doListenImgAnswer() {
+        let inputs = $('.lib-textarea-container, .img-blank-answer');
         $.each(inputs, function(i,item){
             input_in(item, getRanPhrase());
         });
@@ -257,6 +291,8 @@
             <label for="auto_roleplay">角色扮演</label>
             <input type="checkbox" id="auto_danxuan">
             <label for="auto_danxuan">单项选择</label>
+            <input type="checkbox" id="auto_dropchoose">
+            <label for="auto_dropchoose">下拉选择</label>
         </p>
         <h2 style="font-size: small;">设置</h2>
         <p>
