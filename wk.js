@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         清华社视听说 - 自动答题
 // @namespace    http://tampermonkey.net/
-// @version      0.31
+// @version      0.32
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/*
