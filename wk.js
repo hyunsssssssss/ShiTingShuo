@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         清华社视听说 - 自动答题
 // @namespace    http://tampermonkey.net/
-// @version      0.32
+// @version      0.33
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/*
@@ -56,7 +56,7 @@
         let rect = div.getBoundingClientRect();
         var mousedown = document.createEvent("MouseEvents");
         mousedown.initMouseEvent(type,true,true,unsafeWindow,0,  
-        rect.x, rect.y, rect.x, rect.y,false,false,false,false,0,null);
+        rect.x + 5, rect.y + 5, rect.x + 5, rect.y + 5,false,false,false,false,0,null);
         div.dispatchEvent(mousedown);
     }
 
@@ -65,15 +65,15 @@
         dragBlock.animate({
             scrollTop: to.offsetTop - dragBlock[0].offsetTop
         }, 80);
-        await sleep(200);
+        await sleep(100);
         mouseEvent(from, 'mousedown');
-        await sleep(200);
+        await sleep(100);
         mouseEvent(to, 'mousemove');
-        await sleep(200);
+        await sleep(10);
         mouseEvent(to, 'mousemove');
-        await sleep(200);
+        mouseEvent(to, 'mousemove');
         mouseEvent(to, 'mouseup');
-        await sleep(200);
+        await sleep(100);
     }
 
     async function doTopic() {
@@ -339,7 +339,7 @@
         $('#yun_status').text('IDLE');
     }
 
-    $(`<style>.yunPanel input[type="checkbox"]{margin-left: 10px;}.yunPanel h3,.yunPanel input,.yunPanel label{font-size:smaller}.yunPanel p{margin:10px 0}.yunPanel{padding:10px 20px;position:fixed;top:100px;right:150px;height:380px;width:200px;border:1px solid #000;background-color:#fcff6680;z-index:9999}.yunPanel .close{position:absolute;cursor:pointer;top:8px;right:10px}.yunPanel .close:hover{color:#00000088}</style>`).appendTo("head");
+    $(`<style>.course-main{padding-left: 0px ! important;}.yunPanel input[type="checkbox"]{margin-left: 10px;}.yunPanel h3,.yunPanel input,.yunPanel label{font-size:smaller}.yunPanel p{margin:10px 0}.yunPanel{padding:10px 20px;position:fixed;top:100px;right:150px;height:380px;width:200px;border:1px solid #000;background-color:#fcff6680;z-index:9999}.yunPanel .close{position:absolute;cursor:pointer;top:8px;right:10px}.yunPanel .close:hover{color:#00000088}</style>`).appendTo("head");
     $(document.body).after(`
         <div class="yunPanel">
         <div class="close">x</div>
