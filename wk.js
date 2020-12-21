@@ -65,15 +65,15 @@
         dragBlock.animate({
             scrollTop: to.offsetTop - dragBlock[0].offsetTop
         }, 80);
-        await sleep(80);
+        await sleep(200);
         mouseEvent(from, 'mousedown');
-        await sleep(80);
+        await sleep(200);
         mouseEvent(to, 'mousemove');
-        await sleep(80);
+        await sleep(200);
         mouseEvent(to, 'mousemove');
-        await sleep(80);
+        await sleep(200);
         mouseEvent(to, 'mouseup');
-        await sleep(80);
+        await sleep(200);
     }
 
     async function doTopic() {
@@ -294,7 +294,7 @@
         boxes = $('.lib-drag-box');
         for(let i=0; i<answerbox.length; i++) {
             for(const box of boxes) {
-                if(answer[i].includes($(box).find('span')[0].innerText)) {
+                if(answer[i]!=undefined && answer[i].includes($(box).find('span')[0].innerText)) {
                     await dragTo(box, answerbox[i]);
                 }
             };
