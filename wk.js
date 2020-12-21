@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         清华社视听说 - 自动答题
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/course-study-student/*
@@ -17,6 +17,7 @@
 (function() {
     'use strict';
 
+    const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag'];
     let vocabulary = ['fantastic', 'error', 'whatsoever', 'arouse', 'magnificent', 'remarkable', 'schoolwork', 'ease', 'devil', 'factor', 'outstanding', 'infinite', 'infinitely', 'accomplish', 'accomplished', 'mission', 'investigate', 'mysterious', 'analysis', 'peak', 'excellence', 'credit', 'responsibility', 'amount', 'entertain', 'alternative', 'irregular', 'grant', 'cease', 'concentration', 'adapt', 'weird', 'profit', 'alter', 'performance', 'echo', 'hallway', 'await', 'abortion', 'database', 'available', 'indecision', 'ban', 'predict', 'breakthrough', 'fate', 'host', 'pose', 'instance', 'expert', 'surgery', 'naval', 'aircraft', 'target', 'spoonful', 'navigation', 'numerous', 'fluent', 'mechanic', 'advertise', 'advertising', 'waken', 'enormous', 'enormously', 'oversleep', 'survey', 'best-selling', 'filmmaker', 'prosperous', 'involve']
     let phrases = ['Yes, he is', 'No, he isn\'t', 'Yes', 'No']
     let getRanWord = ()=> { return vocabulary[parseInt(Math.random()*vocabulary.length)] }
@@ -24,7 +25,7 @@
     let sleep = (ms)=> { return new Promise(resolve => setTimeout(resolve, ms)); }
     let click_btn = ()=> { $('.wy-course-bottom .wy-course-btn-right .wy-btn').click(); }
     let config = {
-        'autodo': ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose'],
+        'autodo': allauto,
         'autotryerr': true,
         'autostop': false,
         'delay': 10000
@@ -49,6 +50,30 @@
         changeEvent = document.createEvent ("HTMLEvents");
         changeEvent.initEvent ("change", true, true);
         e.dispatchEvent (changeEvent);
+    }
+
+    function mouseEvent(div, type) {
+        let rect = div.getBoundingClientRect();
+        var mousedown = document.createEvent("MouseEvents");
+        mousedown.initMouseEvent(type,true,true,unsafeWindow,0,  
+        rect.x, rect.y, rect.x, rect.y,false,false,false,false,0,null);
+        div.dispatchEvent(mousedown);
+    }
+
+    async function dragTo(from, to) {
+        let dragBlock = $(".lib-drag-block");
+        dragBlock.animate({
+            scrollTop: to.offsetTop - dragBlock[0].offsetTop
+        }, 80);
+        await sleep(80);
+        mouseEvent(from, 'mousedown');
+        await sleep(80);
+        mouseEvent(to, 'mousemove');
+        await sleep(80);
+        mouseEvent(to, 'mousemove');
+        await sleep(80);
+        mouseEvent(to, 'mouseup');
+        await sleep(80);
     }
 
     async function doTopic() {
@@ -81,6 +106,9 @@
         } else if($('.ant-select-dropdown-menu-item').length!=0 && config.autodo.includes('auto_dropchoose')) {
             await setTixing('下拉选择');
             await doDropChoose();
+        } else if($('.lib-drag-box').length!=0 && config.autodo.includes('auto_drag')) {
+            await setTixing('托块');
+            await doDrag();
         } else {
             await unSupposedOrSkip();
             return false;
@@ -238,6 +266,44 @@
         click_btn(); // Submit
     }
 
+    // 托块
+    async function doDrag() {
+        let answerbox = $('.lib-drag-answer-list');
+        let boxes = $('.lib-drag-box');
+        for(let i=0;i<answerbox.length;i++) {
+            await dragTo(boxes[i], answerbox[i]);
+        };
+
+        await sleep(500);
+        click_btn(); // Submit
+        await sleep(2000);
+
+        let answer = [];
+        $('.lib-drag-stu-info-answer').each((i,item)=>{
+            let temp = [];
+            $(item).find('span').each((j, answer)=> {
+                temp.push(answer.innerText)
+            });
+            answer.push(temp)
+        });
+        
+        click_btn(); // Retry
+        await sleep(2000);
+
+        answerbox = $('.lib-drag-answer-list');
+        boxes = $('.lib-drag-box');
+        for(let i=0; i<answerbox.length; i++) {
+            for(const box of boxes) {
+                if(answer[i].includes($(box).find('span')[0].innerText)) {
+                    await dragTo(box, answerbox[i]);
+                }
+            };
+        };
+
+        await sleep(500);
+        click_btn(); // Submit
+    }
+
     // 不支持体型
     async function unSupposedOrSkip(params) {
         console.log('[!]', '遇到不支持体型或未选择，自动跳过。。。');
@@ -273,7 +339,7 @@
         $('#yun_status').text('IDLE');
     }
 
-    $(`<style>.yunPanel input[type="checkbox"]{margin-left: 10px;}.yunPanel h3,.yunPanel input,.yunPanel label{font-size:smaller}.yunPanel p{margin:10px 0}.yunPanel{padding:10px 20px;position:fixed;top:100px;right:150px;height:370px;width:200px;border:1px solid #000;background-color:#fcff6680;z-index:9999}.yunPanel .close{position:absolute;cursor:pointer;top:8px;right:10px}.yunPanel .close:hover{color:#00000088}</style>`).appendTo("head");
+    $(`<style>.yunPanel input[type="checkbox"]{margin-left: 10px;}.yunPanel h3,.yunPanel input,.yunPanel label{font-size:smaller}.yunPanel p{margin:10px 0}.yunPanel{padding:10px 20px;position:fixed;top:100px;right:150px;height:380px;width:200px;border:1px solid #000;background-color:#fcff6680;z-index:9999}.yunPanel .close{position:absolute;cursor:pointer;top:8px;right:10px}.yunPanel .close:hover{color:#00000088}</style>`).appendTo("head");
     $(document.body).after(`
         <div class="yunPanel">
         <div class="close">x</div>
@@ -293,6 +359,8 @@
             <label for="auto_danxuan">单项选择</label>
             <input type="checkbox" id="auto_dropchoose">
             <label for="auto_dropchoose">下拉选择</label>
+            <input type="checkbox" id="auto_drag">
+            <label for="auto_drag">托块</label>
         </p>
         <h2 style="font-size: small;">设置</h2>
         <p>
@@ -340,9 +408,8 @@
     $('.yunPanel .close').click(()=>{$('.yunPanel').hide()});
     $('#yun_reset').click(()=>{ GM.deleteValue('config'); window.location.reload(); });
     $('#yun_save').click(()=>{
-        let ids = config.autodo.slice()
         config.autodo = []
-        $.each(ids, (index, id)=>{
+        $.each(allauto, (index, id)=>{
             if($('#'+id).prop("checked")) {
                 config.autodo.push(id);
             }
@@ -350,8 +417,10 @@
         config.autotryerr = $('#set_tryerr').prop("checked");
         config.autostop = $('#set_manu').prop("checked");
         config.delay = $('#set_delay').val();
-        GM.setValue('config', config);
-        $('#yun_status').text('保存成功');
+
+        GM.setValue('config', config).then(()=>{
+            $('#yun_status').text('保存成功');
+        });
     });
     
 
