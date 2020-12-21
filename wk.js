@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         清华社视听说 - 自动答题
 // @namespace    http://tampermonkey.net/
-// @version      0.33
+// @version      0.34
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/*
@@ -55,8 +55,11 @@
     function mouseEvent(div, type) {
         let rect = div.getBoundingClientRect();
         var mousedown = document.createEvent("MouseEvents");
+
+        let x = (rect.x*2 + rect.width)/2;
+        let y = (rect.y*2 + rect.height)/2;
         mousedown.initMouseEvent(type,true,true,unsafeWindow,0,  
-        rect.x + 5, rect.y + 5, rect.x + 5, rect.y + 5,false,false,false,false,0,null);
+        x, y, x, y,false,false,false,false,0,null);
         div.dispatchEvent(mousedown);
     }
 
@@ -251,7 +254,7 @@
         $('.lib-role-select-item img')[0].click()
         $('.lib-role-select-start button').click()
 
-        await sleep(30000);
+        await sleep(80000);
         click_btn(); // Submit
     }
 
