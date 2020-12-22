@@ -16,8 +16,14 @@
 
 (function() {
     'use strict';
+    
+    // 下方时间你可以根据你的网络情况酌情调整
+    const submitDelay = 3000;       // Submit 之后的等待时间
+    const pageNextDelay = 5000;     // 换页 之后的等待时间
+    const inputDelay = 500;         // 输入 之后的等待时间
 
     const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag'];
+
     let vocabulary = ['fantastic', 'error', 'whatsoever', 'arouse', 'magnificent', 'remarkable', 'schoolwork', 'ease', 'devil', 'factor', 'outstanding', 'infinite', 'infinitely', 'accomplish', 'accomplished', 'mission', 'investigate', 'mysterious', 'analysis', 'peak', 'excellence', 'credit', 'responsibility', 'amount', 'entertain', 'alternative', 'irregular', 'grant', 'cease', 'concentration', 'adapt', 'weird', 'profit', 'alter', 'performance', 'echo', 'hallway', 'await', 'abortion', 'database', 'available', 'indecision', 'ban', 'predict', 'breakthrough', 'fate', 'host', 'pose', 'instance', 'expert', 'surgery', 'naval', 'aircraft', 'target', 'spoonful', 'navigation', 'numerous', 'fluent', 'mechanic', 'advertise', 'advertising', 'waken', 'enormous', 'enormously', 'oversleep', 'survey', 'best-selling', 'filmmaker', 'prosperous', 'involve']
     let phrases = ['Yes, he is', 'No, he isn\'t', 'Yes', 'No']
     let getRanWord = ()=> { return vocabulary[parseInt(Math.random()*vocabulary.length)] }
@@ -82,12 +88,13 @@
         let setTixing = async (t)=> {
             console.log('[+] 题型:', t);
             $('#yun_status').text('当前题型：'+t);
-            await sleep(config.delay) // 挂机10s，增加时长
         }; 
 
         if($('.wy-course-bottom .wy-course-btn-right .wy-btn').text().indexOf('Submit')==-1) {
-            $('.page-next')[1].click();
-            await sleep(1500)
+            // $('.page-next')[1].click();
+            // await sleep(pageNextDelay);
+            $('#yun_status').text('当前题目已完成');
+            return false;
         }
 
         if($('img[title="录音"]').length!=0 && config.autodo.includes('auto_luyin')) {
@@ -116,6 +123,8 @@
             return false;
         }
 
+        await sleep(config.delay); // 挂机，增加时长
+        click_btn(); // Submit
         return true;
     }
 
@@ -130,9 +139,9 @@
             input_in(item, getRanWord());
         });
         
-        await sleep(500);
+        await sleep(inputDelay);
         click_btn(); // Submit
-        await sleep(2000);
+        await sleep(submitDelay);
 
         let answer = [], anyAnswer = false;
         $('.lib-edit-score span[data-type="1"]').each((i,item)=>{
@@ -149,7 +158,7 @@
         }
 
         click_btn(); // Retry
-        await sleep(2000);
+        await sleep(submitDelay);
 
         // 提交正确答案
         inputs = $('.lib-fill-blank-do-input-left');
@@ -157,8 +166,7 @@
             input_in(item, answer[i]);
         });
         
-        await sleep(500);
-        click_btn(); // Submit
+        await sleep(inputDelay);
     }
 
     // 录音题
@@ -186,8 +194,6 @@
             sum_record ++;
         });
         await sleep(2000 + sum_record*5000)
-        click_btn(); // Submit
-        await sleep(3000)
     }
 
     // 单选题
@@ -197,9 +203,9 @@
         // 随机选择以获得正确答案
         $('.lib-single-item-img img').click()
         
-        await sleep(500);
+        await sleep(inputDelay);
         click_btn(); // Submit
-        await sleep(2000);
+        await sleep(submitDelay);
 
         let answer = []
         $('.lib-single-cs-answer').each((i,item)=>{
@@ -207,14 +213,13 @@
         });
 
         click_btn(); // Retry
-        await sleep(2000);
+        await sleep(submitDelay);
 
         $('.lib-single-box').each((i,item)=>{
             $($(item).find('.lib-single-item')[answer_map[answer[i]]]).find('img').click()
         });
 
-        await sleep(500);
-        click_btn(); // Submit
+        await sleep(inputDelay);
     }
 
     // 下拉选择题
@@ -223,9 +228,9 @@
         // 随机选择以获得正确答案
         $('.ant-select-dropdown-menu-item').click();
         
-        await sleep(500);
+        await sleep(inputDelay);
         click_btn(); // Submit
-        await sleep(2000);
+        await sleep(submitDelay);
 
         let answer = [];
         $('.wy-lib-cs-key + span').each((i,item)=>{
@@ -233,7 +238,7 @@
         });
         
         click_btn(); // Retry
-        await sleep(2000);
+        await sleep(submitDelay);
 
         $('.ant-select-dropdown-menu').each((i,div)=>{
             $(div).find('li').each((index, item)=>{
@@ -244,8 +249,7 @@
             });
         });
 
-        await sleep(500);
-        click_btn(); // Submit
+        await sleep(inputDelay);
     }
 
     // 角色扮演
@@ -254,7 +258,6 @@
         $('.lib-role-select-start button').click()
 
         await sleep(80000);
-        click_btn(); // Submit
     }
 
     // 听力/图片填空
@@ -264,8 +267,7 @@
             input_in(item, getRanPhrase());
         });
         
-        await sleep(500);
-        click_btn(); // Submit
+        await sleep(inputDelay);
     }
 
     // 托块
@@ -276,9 +278,9 @@
             await dragTo(boxes[i], answerbox[i]);
         };
 
-        await sleep(500);
+        await sleep(inputDelay);
         click_btn(); // Submit
-        await sleep(2000);
+        await sleep(submitDelay);
 
         let answer = [];
         $('.lib-drag-stu-info-answer').each((i,item)=>{
@@ -290,7 +292,7 @@
         });
         
         click_btn(); // Retry
-        await sleep(2000);
+        await sleep(submitDelay);
 
         answerbox = $('.lib-drag-answer-list');
         boxes = $('.lib-drag-box');
@@ -302,8 +304,7 @@
             };
         };
 
-        await sleep(500);
-        click_btn(); // Submit
+        await sleep(inputDelay);
     }
 
     // 不支持体型
@@ -333,9 +334,9 @@
                 break;
             }
             console.log('[*]', '已完成，切换下一题。。。');
-            await sleep(1500);
+            await sleep(submitDelay);
             $('.page-next')[1].click()
-            await sleep(5000); 
+            await sleep(pageNextDelay); 
         }
         $('.yunPanel button').prop('disabled', false);
         $('#yun_status').text('IDLE');
@@ -401,9 +402,11 @@
         $('#yun_start').text('开始');
         running = false;
         $('.yunPanel button').prop('disabled', true);
-        doTopic().then(()=>{
+        doTopic().then((result)=>{
             $('.yunPanel button').prop('disabled', false);
-            $('#yun_status').text('Done!');
+            if(result) {
+                $('#yun_status').text('Done!');
+            }
         });
         
     });
