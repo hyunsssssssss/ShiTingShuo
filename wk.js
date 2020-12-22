@@ -11,7 +11,7 @@
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.deleteValue
-// @run-at       document-idle
+// @run-at       document-start
 // ==/UserScript==
 
 (function() {
@@ -22,7 +22,7 @@
     const pageNextDelay = 5000;     // 换页 之后的等待时间
     const inputDelay = 500;         // 输入 之后的等待时间
 
-    const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag'];
+    const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag', 'auto_video'];
 
     let vocabulary = ['fantastic', 'error', 'whatsoever', 'arouse', 'magnificent', 'remarkable', 'schoolwork', 'ease', 'devil', 'factor', 'outstanding', 'infinite', 'infinitely', 'accomplish', 'accomplished', 'mission', 'investigate', 'mysterious', 'analysis', 'peak', 'excellence', 'credit', 'responsibility', 'amount', 'entertain', 'alternative', 'irregular', 'grant', 'cease', 'concentration', 'adapt', 'weird', 'profit', 'alter', 'performance', 'echo', 'hallway', 'await', 'abortion', 'database', 'available', 'indecision', 'ban', 'predict', 'breakthrough', 'fate', 'host', 'pose', 'instance', 'expert', 'surgery', 'naval', 'aircraft', 'target', 'spoonful', 'navigation', 'numerous', 'fluent', 'mechanic', 'advertise', 'advertising', 'waken', 'enormous', 'enormously', 'oversleep', 'survey', 'best-selling', 'filmmaker', 'prosperous', 'involve']
     let phrases = ['Yes, he is', 'No, he isn\'t', 'Yes', 'No']
@@ -58,12 +58,20 @@
         e.dispatchEvent (changeEvent);
     }
 
-    function mouseEvent(div, type) {
-        let rect = div.getBoundingClientRect();
+    function mouseEvent(div, type, pos) {
         var mousedown = document.createEvent("MouseEvents");
 
-        let x = (rect.x*2 + rect.width)/2;
-        let y = (rect.y*2 + rect.height)/2;
+        let x = 0;
+        let y = 0;
+        if(pos == undefined) {
+            let rect = div.getBoundingClientRect();
+            x = (rect.x*2 + rect.width)/2;
+            y = (rect.y*2 + rect.height)/2;
+        } else {
+            x = pos.x;
+            y = pos.y;
+        }
+
         mousedown.initMouseEvent(type,true,true,unsafeWindow,0,  
         x, y, x, y,false,false,false,false,0,null);
         div.dispatchEvent(mousedown);
@@ -90,7 +98,7 @@
             $('#yun_status').text('当前题型：'+t);
         }; 
 
-        if($('.wy-course-bottom .wy-course-btn-right .wy-btn').text().indexOf('Submit')==-1) {
+        if($('.wy-course-bottom .wy-course-btn-right .wy-btn').text().indexOf('Submit')==-1 && $('#J_prismPlayer').length==0) {
             // $('.page-next')[1].click();
             // await sleep(pageNextDelay);
             $('#yun_status').text('当前题目已完成');
@@ -118,6 +126,11 @@
         } else if($('.lib-drag-box').length!=0 && config.autodo.includes('auto_drag')) {
             await setTixing('托块');
             await doDrag();
+        } else if($('#J_prismPlayer').length!=0 && config.autodo.includes('auto_video')) {
+            await setTixing('视频');
+            await doVideo();
+            await sleep(config.delay); // 挂机，增加时长
+            return true;
         } else {
             await unSupposedOrSkip();
             return false;
@@ -307,6 +320,20 @@
         await sleep(inputDelay);
     }
 
+    async function doVideo() {
+        await sleep(2000);
+
+        let player = unsafeWindow['yunPlayer'];
+        if(player == undefined) {
+            console.error('yunPlayer is undefined!');
+            return;
+        }
+        player.play();
+        await sleep(1000);
+        player.seek(player.getDuration() - 5);
+        await sleep(8000);
+    }
+
     // 不支持体型
     async function unSupposedOrSkip(params) {
         console.log('[!]', '遇到不支持体型或未选择，自动跳过。。。');
@@ -342,93 +369,117 @@
         $('#yun_status').text('IDLE');
     }
 
-    $(`<style>.course-main{padding-left: 0px ! important;}.yunPanel input[type="checkbox"]{margin-left: 10px;}.yunPanel h3,.yunPanel input,.yunPanel label{font-size:smaller}.yunPanel p{margin:10px 0}.yunPanel{padding:10px 20px;position:fixed;top:100px;right:150px;height:380px;width:200px;border:1px solid #000;background-color:#fcff6680;z-index:9999}.yunPanel .close{position:absolute;cursor:pointer;top:8px;right:10px}.yunPanel .close:hover{color:#00000088}</style>`).appendTo("head");
-    $(document.body).after(`
-        <div class="yunPanel">
-        <div class="close">x</div>
-        <h1 style="text-align: center;font-size: medium;">社听说 - 自动答题</h1>
-        <hr>
-        <h2 style="font-size: small;">自动完成题型：</h2>
-        <p>
-            <input type="checkbox" id="auto_tiankong">
-            <label for="auto_tiankong">填空</label>
-            <input type="checkbox" id="auto_luyin">
-            <label for="auto_luyin">录音</label>
-            <input type="checkbox" id="auto_lytk">
-            <label for="auto_lytk">录音填空</label>
-            <input type="checkbox" id="auto_roleplay">
-            <label for="auto_roleplay">角色扮演</label>
-            <input type="checkbox" id="auto_danxuan">
-            <label for="auto_danxuan">单项选择</label>
-            <input type="checkbox" id="auto_dropchoose">
-            <label for="auto_dropchoose">下拉选择</label>
-            <input type="checkbox" id="auto_drag">
-            <label for="auto_drag">托块</label>
-        </p>
-        <h2 style="font-size: small;">设置</h2>
-        <p>
-            <p>
-                <input type="checkbox" id="set_tryerr">
-                <label for="set_tryerr">自动试错</label>
-                <input type="checkbox" id="set_manu">
-                <label for="set_manu">不支持题型停止</label>
-            </p>
-            <label>每题耗时(ms) <input style="width: 50px;" type="text" id="set_delay"></label>
-            <button id="yun_save" style="float: left;margin-top:5px;width: 48%;">保存</button>
-            <button id="yun_reset" style="float: right;margin-top:5px;width: 48%;">默认</button>
-            <div style="clear: both;"></div>
-        </p>
-        <hr>
-        <h2 id="yun_status" style="font-size: small;text-align: center;margin-bottom:8px;">IDLE</h2>
-        <button id="yun_doone" style="width: 100%;margin-bottom: 3px;">做一题</button>
-        <button id="yun_start" style="width: 100%;">开始</button>
-        </div>
-    `);
+    console.log('=== 视听说 - 脚本启动 ===');
 
-    $('#yun_start').click(()=>{
-        if($('#yun_start').text()=='开始') {
-            $('#yun_doone').prop('disabled', true);
-            running = true;
-            doLoop();
-            $('#yun_start').text('停止')
-        } else {
-            $('.yunPanel button').prop('disabled', true);
-            running = false;
-            $('#yun_start').text('开始')
+    let ori_create_player = unsafeWindow['Aliplayer'];
+    Object.defineProperty(unsafeWindow, 'Aliplayer', {
+        set: (v) => {
+            ori_create_player = v;
+        },
+        get: () => {
+            return function(config) {
+                unsafeWindow['yunPlayer'] = ori_create_player(config);
+                console.log('getPlayer!!!', unsafeWindow['yunPlayer']);
+                return unsafeWindow['yunPlayer'];
+            };
         }
     });
 
-    $('#yun_doone').click(()=>{
-        $('#yun_start').text('开始');
-        running = false;
-        $('.yunPanel button').prop('disabled', true);
-        doTopic().then((result)=>{
-            $('.yunPanel button').prop('disabled', false);
-            if(result) {
-                $('#yun_status').text('Done!');
+    window.addEventListener ("load", pageFullyLoaded);
+
+    function pageFullyLoaded () {
+        console.log('=== 视听说 - 注入窗口 ===');
+        $(`<style>.course-main{padding-left: 0px ! important;}.yunPanel input[type="checkbox"]{margin-left: 10px;}.yunPanel h3,.yunPanel input,.yunPanel label{font-size:smaller}.yunPanel p{margin:10px 0}.yunPanel{padding:10px 20px;position:fixed;top:100px;right:150px;height:380px;width:200px;border:1px solid #000;background-color:#fcff6680;z-index:9999}.yunPanel .close{position:absolute;cursor:pointer;top:8px;right:10px}.yunPanel .close:hover{color:#00000088}</style>`).appendTo("head");
+        $(document.body).after(`
+            <div class="yunPanel">
+            <div class="close">x</div>
+            <h1 style="text-align: center;font-size: medium;">社听说 - 自动答题</h1>
+            <hr>
+            <h2 style="font-size: small;">自动完成题型：</h2>
+            <p>
+                <input type="checkbox" id="auto_tiankong">
+                <label for="auto_tiankong">填空</label>
+                <input type="checkbox" id="auto_luyin">
+                <label for="auto_luyin">录音</label>
+                <input type="checkbox" id="auto_lytk">
+                <label for="auto_lytk">录音填空</label>
+                <input type="checkbox" id="auto_roleplay">
+                <label for="auto_roleplay">角色扮演</label>
+                <input type="checkbox" id="auto_danxuan">
+                <label for="auto_danxuan">单项选择</label>
+                <input type="checkbox" id="auto_dropchoose">
+                <label for="auto_dropchoose">下拉选择</label>
+                <input type="checkbox" id="auto_drag">
+                <label for="auto_drag">托块</label>
+                <input type="checkbox" id="auto_video">
+                <label for="auto_video">视频</label>
+            </p>
+            <h2 style="font-size: small;">设置</h2>
+            <p>
+                <p>
+                    <input type="checkbox" id="set_tryerr">
+                    <label for="set_tryerr">自动试错</label>
+                    <input type="checkbox" id="set_manu">
+                    <label for="set_manu">不支持题型停止</label>
+                </p>
+                <label>每题耗时(ms) <input style="width: 50px;" type="text" id="set_delay"></label>
+                <button id="yun_save" style="float: left;margin-top:5px;width: 48%;">保存</button>
+                <button id="yun_reset" style="float: right;margin-top:5px;width: 48%;">默认</button>
+                <div style="clear: both;"></div>
+            </p>
+            <hr>
+            <h2 id="yun_status" style="font-size: small;text-align: center;margin-bottom:8px;">IDLE</h2>
+            <button id="yun_doone" style="width: 100%;margin-bottom: 3px;">做一题</button>
+            <button id="yun_start" style="width: 100%;">开始</button>
+            </div>
+        `);
+    
+        $('#yun_start').click(()=>{
+            if($('#yun_start').text()=='开始') {
+                $('#yun_doone').prop('disabled', true);
+                running = true;
+                doLoop();
+                $('#yun_start').text('停止')
+            } else {
+                $('.yunPanel button').prop('disabled', true);
+                running = false;
+                $('#yun_start').text('开始')
             }
+        });
+    
+        $('#yun_doone').click(()=>{
+            $('#yun_start').text('开始');
+            running = false;
+            $('.yunPanel button').prop('disabled', true);
+            doTopic().then((result)=>{
+                $('.yunPanel button').prop('disabled', false);
+                if(result) {
+                    $('#yun_status').text('Done!');
+                }
+            });
+            
+        });
+        $('.yunPanel .close').click(()=>{$('.yunPanel').hide()});
+        $('#yun_reset').click(()=>{ GM.deleteValue('config'); window.location.reload(); });
+        $('#yun_save').click(()=>{
+            config.autodo = []
+            $.each(allauto, (index, id)=>{
+                if($('#'+id).prop("checked")) {
+                    config.autodo.push(id);
+                }
+            });
+            config.autotryerr = $('#set_tryerr').prop("checked");
+            config.autostop = $('#set_manu').prop("checked");
+            config.delay = $('#set_delay').val();
+    
+            GM.setValue('config', config).then(()=>{
+                $('#yun_status').text('保存成功');
+            });
         });
         
-    });
-    $('.yunPanel .close').click(()=>{$('.yunPanel').hide()});
-    $('#yun_reset').click(()=>{ GM.deleteValue('config'); window.location.reload(); });
-    $('#yun_save').click(()=>{
-        config.autodo = []
-        $.each(allauto, (index, id)=>{
-            if($('#'+id).prop("checked")) {
-                config.autodo.push(id);
-            }
-        });
-        config.autotryerr = $('#set_tryerr').prop("checked");
-        config.autostop = $('#set_manu').prop("checked");
-        config.delay = $('#set_delay').val();
-
-        GM.setValue('config', config).then(()=>{
-            $('#yun_status').text('保存成功');
-        });
-    });
     
+        initConf();
+    }
 
-    initConf();
     // Your code here...
 })();
