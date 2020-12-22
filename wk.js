@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         清华社视听说 - 自动答题
 // @namespace    http://tampermonkey.net/
-// @version      0.34
+// @version      0.35
 // @description  解放你的双手
 // @author       Hyun
 // @include      *://www.tsinghuaelt.com/*
@@ -65,9 +65,8 @@
 
     async function dragTo(from, to) {
         let dragBlock = $(".lib-drag-block");
-        dragBlock.animate({
-            scrollTop: to.offsetTop - dragBlock[0].offsetTop
-        }, 80);
+        dragBlock.scrollTop(to.offsetTop - dragBlock[0].offsetTop);
+        $(document).scrollTop(dragBlock[0].offsetTop);
         await sleep(100);
         mouseEvent(from, 'mousedown');
         await sleep(100);
