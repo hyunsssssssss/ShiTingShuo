@@ -1,8 +1,10 @@
-![运行图](https://raw.githubusercontent.com/hyunsssssssss/ShiTingShuo/master/docs/pic.png)
+![运行图](https://raw.githubusercontent.com/hyunsssssssss/ShiTingShuo/master/docs/pic_v4.png)
 
 # 视听说自动答题挂课助手
 
 > 适用于清华英语社 - 视听说
+
+现已更新 v4.0 重构代码, 优化 UI, 且已完全支持语音题目自动回答
 
 ## 构建
 ```
@@ -16,7 +18,7 @@ $ yarn build
 - 可无人值守，全自动挂课
 
 ## 支持题型
-> 经过长时间测试，除了题型混合题（极少）外，均能达到完成率100%，除了录音题目，均可自动获取并提交正确答案
+> 经过长时间测试，除了题型混合题（极少）外，均能达到完成率100%，<del>除了录音题目</del>，均可自动获取并提交正确答案
 1. 填空
 2. 录音
 3. 视频
