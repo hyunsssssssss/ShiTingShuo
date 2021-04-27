@@ -1,0 +1,35 @@
+.yunPanel input[type="checkbox"] {
+    margin-left: 10px;
+}
+
+.yunPanel h3,.yunPanel input,.yunPanel label {
+    font-size: smaller
+}
+
+.yunPanel p {
+    margin: 10px 0
+}
+
+.yunPanel {
+    padding: 10px 20px;
+    position: fixed;
+    top: 100px;
+    right: 150px;
+    height: 420px;
+    width: 200px;
+    border: 1px solid #000;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 9999;
+    border-radius: 6px;
+}
+
+.yunPanel .close {
+    position: absolute;
+    cursor: pointer;
+    top: 8px;
+    right: 10px
+}
+
+.yunPanel .close:hover {
+    color: #00000088
+}
