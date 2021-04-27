@@ -34,7 +34,7 @@ module.exports = {
                 include: ['*://www.tsinghuaelt.com/*'],
                 "run-at": 'document-start',
                 grant: ['GM.addStyle', 'GM.setValue', 'GM.getValue', 'GM.deleteValue'],
-                version: data.version + '.' + data.buildTime,
+                version: data.version,
                 description: '解放你的双手',
                 author: 'Hyun',
                 icon: 'https://www.tsinghuaelt.com/favicon.ico',
