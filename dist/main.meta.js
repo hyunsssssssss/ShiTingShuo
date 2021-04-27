@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        清华社视听说 - 自动答题
-// @version     0.4.0
+// @version     0.4.1
 // @author      Hyun
 // @description 解放你的双手
 // @include     *://www.tsinghuaelt.com/*
