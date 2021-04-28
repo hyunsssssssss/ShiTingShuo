@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        清华社视听说 - 自动答题
-// @version     0.4.1
+// @version     0.4.2
 // @author      Hyun
 // @description 解放你的双手
 // @include     *://www.tsinghuaelt.com/*
@@ -107,15 +107,15 @@ async function dragTo(from, to) {
     let dragBlock = $(".lib-drag-block");
     dragBlock.scrollTop(to.offsetTop - dragBlock[0].offsetTop);
     $(document).scrollTop(dragBlock[0].offsetTop);
-    await utils_sleep(100);
+    await sleep(100);
     mouseEvent(from, 'mousedown');
-    await utils_sleep(100);
+    await sleep(100);
     mouseEvent(to, 'mousemove');
-    await utils_sleep(10);
+    await sleep(10);
     mouseEvent(to, 'mousemove');
     mouseEvent(to, 'mousemove');
     mouseEvent(to, 'mouseup');
-    await utils_sleep(100);
+    await sleep(100);
 }
 
 function extendConsole(console, isDebug) {
@@ -289,15 +289,15 @@ let vocabulary = ['fantastic', 'error', 'whatsoever', 'arouse', 'magnificent', '
 let phrases = ['Yes, he is', 'No, he isn\'t', 'Yes', 'No']
 let getRanWord = ()=> { return vocabulary[parseInt(Math.random()*vocabulary.length)] }
 let getRanPhrase = ()=> { return phrases[parseInt(Math.random()*phrases.length)] }
-let utils_sleep = (ms)=> { return new Promise(resolve => setTimeout(resolve, ms)); }
-let utils_click_btn = ()=> { $('.wy-course-bottom .wy-course-btn-right .wy-btn').click(); }
+let sleep = (ms)=> { return new Promise(resolve => setTimeout(resolve, ms)); }
+let click_btn = ()=> { $('.wy-course-bottom .wy-course-btn-right .wy-btn').click(); }
 
 
 ;// CONCATENATED MODULE: ./src/config.js
 // 下方时间你可以根据你的网络情况酌情调整
-const config_submitDelay = 3000;       // Submit 之后的等待时间
+const submitDelay = 3000;       // Submit 之后的等待时间
 const pageNextDelay = 5000;     // 换页 之后的等待时间
-const config_inputDelay = 500;         // 输入 之后的等待时间
+const inputDelay = 500;         // 输入 之后的等待时间
 
 const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag', 'auto_video'];
 let user_config = {
@@ -514,9 +514,9 @@ async function doTianKone() {
         input_in(item, getRanWord());
     });
     
-    await utils_sleep(config_inputDelay);
-    utils_click_btn(); // Submit
-    await utils_sleep(config_submitDelay);
+    await sleep(inputDelay);
+    click_btn(); // Submit
+    await sleep(submitDelay);
 
     let answer = [], anyAnswer = false;
     $('.lib-edit-score span[data-type="1"]').each((i,item)=>{
@@ -532,8 +532,8 @@ async function doTianKone() {
         return;
     }
 
-    utils_click_btn(); // Retry
-    await utils_sleep(config_submitDelay);
+    click_btn(); // Retry
+    await sleep(submitDelay);
 
     // 提交正确答案
     inputs = $('.lib-fill-blank-do-input-left');
@@ -541,7 +541,7 @@ async function doTianKone() {
         input_in(item, answer[i]);
     });
     
-    await utils_sleep(config_inputDelay);
+    await sleep(inputDelay);
 }
 
 // 录音题
@@ -568,7 +568,7 @@ async function doReadRepeat() {
         setTimeout(()=>{click_record(div);}, 3000 + sum_record*5000);
         sum_record ++;
     });
-    await utils_sleep(2000 + sum_record*5000)
+    await sleep(2000 + sum_record*5000)
 }
 
 // 单选题
@@ -578,27 +578,27 @@ async function doSingleChoose() {
     // 随机选择以获得正确答案
     $('.lib-single-item-img img').click()
     
-    await utils_sleep(config_inputDelay);
-    utils_click_btn(); // Submit
-    await utils_sleep(config_submitDelay);
+    await sleep(inputDelay);
+    click_btn(); // Submit
+    await sleep(submitDelay);
 
     let answer = []
     $('.lib-single-cs-answer').each((i,item)=>{
         answer.push(item.innerText)
     });
 
-    utils_click_btn(); // Retry
-    await utils_sleep(config_submitDelay);
+    click_btn(); // Retry
+    await sleep(submitDelay);
 
     $('.lib-single-box').each((i,item)=>{
         $($(item).find('.lib-single-item')[answer_map[answer[i]]]).find('img').click()
     });
 
-    await utils_sleep(config_inputDelay);
+    await sleep(inputDelay);
 }
 
 // 下拉选择题
-async function topic_dom_doDropChoose() {
+async function doDropChoose() {
 
     // 随机选择以获得正确答案
     $('.ant-select-dropdown-menu-item').click();
@@ -632,7 +632,7 @@ async function doRolePlay() {
     $('.lib-role-select-item img')[0].click()
     $('.lib-role-select-start button').click()
 
-    await utils_sleep(80000);
+    await sleep(80000);
 }
 
 // 听力/图片填空
@@ -642,7 +642,7 @@ async function doListenImgAnswer() {
         input_in(item, getRanPhrase());
     });
     
-    await utils_sleep(config_inputDelay);
+    await sleep(inputDelay);
 }
 
 // 托块
@@ -653,9 +653,9 @@ async function doDrag() {
         await dragTo(boxes[i], answerbox[i]);
     };
 
-    await utils_sleep(config_inputDelay);
-    utils_click_btn(); // Submit
-    await utils_sleep(config_submitDelay);
+    await sleep(inputDelay);
+    click_btn(); // Submit
+    await sleep(submitDelay);
 
     let answer = [];
     $('.lib-drag-stu-info-answer').each((i,item)=>{
@@ -666,8 +666,8 @@ async function doDrag() {
         answer.push(temp)
     });
     
-    utils_click_btn(); // Retry
-    await utils_sleep(config_submitDelay);
+    click_btn(); // Retry
+    await sleep(submitDelay);
 
     answerbox = $('.lib-drag-answer-list');
     boxes = $('.lib-drag-box');
@@ -679,11 +679,11 @@ async function doDrag() {
         };
     };
 
-    await utils_sleep(config_inputDelay);
+    await sleep(inputDelay);
 }
 
 async function doVideo() {
-    await utils_sleep(2000);
+    await sleep(2000);
 
     let player = unsafeWindow['yunPlayer'];
     if(player == undefined) {
@@ -691,9 +691,9 @@ async function doVideo() {
         return;
     }
     player.play();
-    await utils_sleep(1000);
+    await sleep(1000);
     player.seek(player.getDuration() - 5);
-    await utils_sleep(8000);
+    await sleep(8000);
 }
 
 // 不支持体型
@@ -750,15 +750,15 @@ async function doTopic() {
     } else if($('#J_prismPlayer').length!=0 && user_config.autodo.includes('auto_video')) {
         await setTixing('视频');
         await doVideo();
-        await utils_sleep(user_config.delay); // 挂机，增加时长
+        await sleep(user_config.delay); // 挂机，增加时长
         return true;
     } else {
         await unSupposedOrSkip();
         return false;
     }
 
-    await utils_sleep(user_config.delay); // 挂机，增加时长
-    utils_click_btn(); // Submit
+    await sleep(user_config.delay); // 挂机，增加时长
+    click_btn(); // Submit
     return true;
 }
 
@@ -786,9 +786,9 @@ async function doLoop() {
             break;
         }
         console.log('[*]', '已完成，切换下一题。。。');
-        await utils_sleep(config_submitDelay);
+        await sleep(submitDelay);
         $('.page-next')[1].click()
-        await utils_sleep(pageNextDelay); 
+        await sleep(pageNextDelay); 
     }
     $('.yunPanel button').prop('disabled', false);
     $('.yunPanel button').removeClass('is-disabled');

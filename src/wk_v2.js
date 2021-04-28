@@ -36,7 +36,7 @@ async function doTopic() {
         await DOM.doRolePlay();
     } else if($('.ant-select-dropdown-menu-item').length!=0 && user_config.autodo.includes('auto_dropchoose')) {
         await setTixing('下拉选择');
-        await doDropChoose();
+        await DOM.doDropChoose();
     } else if($('.lib-drag-box').length!=0 && user_config.autodo.includes('auto_drag')) {
         await setTixing('托块');
         await DOM.doDrag();
