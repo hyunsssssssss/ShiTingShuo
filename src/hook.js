@@ -136,7 +136,7 @@ export function initHook() {
                     url: `https://open.izhixue.cn/resource/web/url`,
                     type: "get",
                     async: false,
-                    data: { 
+                    data: {
                         token: uploadToken,
                         resourceId: this.doing_topic.audio
                     },
