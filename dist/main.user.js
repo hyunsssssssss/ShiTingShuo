@@ -58,51 +58,9 @@ module.exports = ".yunPanel .grabber {\r\n    cursor: grab;\r\n    user-select: 
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-
-// NAMESPACE OBJECT: ./src/utils.js
-var utils_namespaceObject = {};
-__webpack_require__.r(utils_namespaceObject);
-__webpack_require__.d(utils_namespaceObject, {
-  "li": () => (click_btn),
-  "Jy": () => (dragTo),
-  "h": () => (extendConsole),
-  "BH": () => (getRanPhrase),
-  "Dy": () => (getRanWord),
-  "TZ": () => (input_in),
-  "_v": () => (sleep)
-});
 
 ;// CONCATENATED MODULE: ./src/utils.js
 function input_in(e, txt) {
@@ -357,7 +315,6 @@ let user_config = {
 let uploadToken, recordDetail;
 
 function initHook() {
-    unsafeWindow['sss'] = utils_namespaceObject.text_to_mp3;
     // Hook 播放器
     let ori_create_player = unsafeWindow['Aliplayer'];
     Object.defineProperty(unsafeWindow, 'Aliplayer', {
@@ -496,9 +453,9 @@ function initHook() {
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
-                        console.log(GM);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', response.data.PlayAuth, true);
+                        xhr.withCredentials = false;
                         xhr.responseType = 'arraybuffer';
                         xhr.error = (err)=> {
                             console.error('[Yun]', 'get Audio Fail', err);

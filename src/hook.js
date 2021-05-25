@@ -143,6 +143,7 @@ export function initHook() {
                     success: (response)=> {
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', response.data.PlayAuth, true);
+                        xhr.withCredentials = false;
                         xhr.responseType = 'arraybuffer';
                         xhr.error = (err)=> {
                             console.error('[Yun]', 'get Audio Fail', err);
