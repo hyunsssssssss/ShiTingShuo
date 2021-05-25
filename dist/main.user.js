@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        清华社视听说 - 自动答题
-// @version     0.4.2
+// @version     0.4.3
 // @author      Hyun
 // @description 解放你的双手
 // @include     *://www.tsinghuaelt.com/*
@@ -27,7 +27,7 @@ module.exports = "@charset \"UTF-8\";.el-pagination--small .arrow.disabled,.el-t
 /***/ 987:
 /***/ ((module) => {
 
-module.exports = ".yunPanel input[type=\"checkbox\"] {\r\n    margin-left: 10px;\r\n}\r\n\r\n.yunPanel h3,.yunPanel input,.yunPanel label {\r\n    font-size: smaller\r\n}\r\n\r\n.yunPanel p {\r\n    margin: 10px 0\r\n}\r\n\r\n.yunPanel {\r\n    padding: 10px 20px;\r\n    position: fixed;\r\n    top: 100px;\r\n    right: 150px;\r\n    height: 420px;\r\n    width: 200px;\r\n    border: 1px solid #000;\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n    z-index: 9999;\r\n    border-radius: 6px;\r\n}\r\n\r\n.yunPanel .close {\r\n    position: absolute;\r\n    cursor: pointer;\r\n    top: 8px;\r\n    right: 10px\r\n}\r\n\r\n.yunPanel .close:hover {\r\n    color: #00000088\r\n}";
+module.exports = ".yunPanel .grabber {\r\n    cursor: grab;\r\n    user-select: none;\r\n}\r\n\r\n.yunPanel input[type=\"checkbox\"] {\r\n    margin-left: 10px;\r\n}\r\n\r\n.yunPanel h3,.yunPanel input,.yunPanel label {\r\n    font-size: smaller\r\n}\r\n\r\n.yunPanel p {\r\n    margin: 10px 0\r\n}\r\n\r\n.yunPanel {\r\n    padding: 10px 20px;\r\n    position: fixed;\r\n    top: 100px;\r\n    right: 150px;\r\n    height: 420px;\r\n    width: 200px;\r\n    border: 1px solid #000;\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n    z-index: 9999;\r\n    border-radius: 6px;\r\n}\r\n\r\n.yunPanel .close {\r\n    position: absolute;\r\n    cursor: pointer;\r\n    top: 8px;\r\n    right: 10px\r\n}\r\n\r\n.yunPanel .close:hover {\r\n    color: #00000088\r\n}";
 
 /***/ })
 
@@ -58,9 +58,51 @@ module.exports = ".yunPanel input[type=\"checkbox\"] {\r\n    margin-left: 10px;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
+
+// NAMESPACE OBJECT: ./src/utils.js
+var utils_namespaceObject = {};
+__webpack_require__.r(utils_namespaceObject);
+__webpack_require__.d(utils_namespaceObject, {
+  "li": () => (click_btn),
+  "Jy": () => (dragTo),
+  "h": () => (extendConsole),
+  "BH": () => (getRanPhrase),
+  "Dy": () => (getRanWord),
+  "TZ": () => (input_in),
+  "_v": () => (sleep)
+});
 
 ;// CONCATENATED MODULE: ./src/utils.js
 function input_in(e, txt) {
@@ -311,9 +353,11 @@ let user_config = {
 
 ;// CONCATENATED MODULE: ./src/hook.js
 
+
 let uploadToken, recordDetail;
 
 function initHook() {
+    unsafeWindow['sss'] = utils_namespaceObject.text_to_mp3;
     // Hook 播放器
     let ori_create_player = unsafeWindow['Aliplayer'];
     Object.defineProperty(unsafeWindow, 'Aliplayer', {
@@ -443,23 +487,27 @@ function initHook() {
         send(data) {
             if(typeof data == 'object' && user_config.autorecord) { // 发送语音
                 if(!this.doing_topic) return;
-
                 $.ajax({
                     url: `https://open.izhixue.cn/resource/web/url`,
                     type: "get",
                     async: false,
-                    data: { 
+                    data: {
                         token: uploadToken,
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
+                        console.log(GM);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', response.data.PlayAuth, true);
                         xhr.responseType = 'arraybuffer';
-                        
+                        xhr.error = (err)=> {
+                            console.error('[Yun]', 'get Audio Fail', err);
+                        }
                         xhr.onload = (e)=> {
                             if (xhr.status == 200) {
-                                super.send(xhr.response);
+                                for (let i = 0; i < xhr.response.byteLength; i+=3840)
+                                    super.send(xhr.response.slice(i, i+3840));
+                                
                                 super.send(new ArrayBuffer(0));
                                 console.success('发送标准答案成功！');
                             } else {
@@ -469,8 +517,8 @@ function initHook() {
                         
                         xhr.send();
                     },
-                    error: (xhr)=> {
-                        console.error('[Yun]', 'get Audio Fail');
+                    error: (err)=> {
+                        console.error('[Yun]', 'get Audio Info Fail', err);
                     }
                 });
                 this.doing_topic = undefined;
@@ -717,7 +765,7 @@ async function doTopic() {
     let setTixing = async (t)=> {
         console.log('[+] 题型:', t);
         $('#yun_status').text('当前题型：'+t);
-    }; 
+    };
 
     if($('.wy-course-bottom .wy-course-btn-right .wy-btn').text().indexOf('Submit')==-1 && $('#J_prismPlayer').length==0) {
         // $('.page-next')[1].click();
@@ -788,7 +836,7 @@ async function doLoop() {
         console.log('[*]', '已完成，切换下一题。。。');
         await sleep(submitDelay);
         $('.page-next')[1].click()
-        await sleep(pageNextDelay); 
+        await sleep(pageNextDelay);
     }
     $('.yunPanel button').prop('disabled', false);
     $('.yunPanel button').removeClass('is-disabled');
@@ -808,7 +856,7 @@ function pageFullyLoaded () {
     $(document.body).after(`
     <div class="yunPanel">
         <div class="close">x</div>
-        <h1 style="text-align: center;font-size: medium;">视听说 - 自动答题</h1>
+        <h1 style="text-align: center;font-size: medium;" class="grabber">视听说 - 自动答题</h1>
         <hr>
         <h2 style="font-size: small;">自动完成题型：</h2>
         <p>
@@ -851,6 +899,23 @@ function pageFullyLoaded () {
     </div>
     `);
 
+    // 窗口拖动
+    let draging = false, pos = {x: 0, y: 0}, last_pos = {x: 0, y: 0};
+
+    $(document).mousemove((e)=>{
+        if(draging) {
+            pos.x += e.pageX - last_pos.x;
+            pos.y += e.pageY - last_pos.y;
+            $('.yunPanel').css('transform', `translateX(${pos.x}px) translateY(${pos.y}px)`);
+        }
+        last_pos.x = e.pageX;
+        last_pos.y = e.pageY;
+    });
+
+    $('.grabber').mousedown((e)=>{ draging = true; });
+    $(document).mouseup(()=>{ draging = false; });
+
+    // 按钮事件
     $('#yun_start').click(()=>{
         if($('#yun_start').text()=='开始') {
             $('#yun_doone').prop('disabled', true);

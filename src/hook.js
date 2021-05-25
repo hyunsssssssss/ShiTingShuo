@@ -1,7 +1,9 @@
 import { user_config } from './config'
+import { text_to_mp3 } from './utils'
 let uploadToken, recordDetail;
 
 export function initHook() {
+    unsafeWindow['sss'] = text_to_mp3;
     // Hook 播放器
     let ori_create_player = unsafeWindow['Aliplayer'];
     Object.defineProperty(unsafeWindow, 'Aliplayer', {
@@ -131,7 +133,6 @@ export function initHook() {
         send(data) {
             if(typeof data == 'object' && user_config.autorecord) { // 发送语音
                 if(!this.doing_topic) return;
-
                 $.ajax({
                     url: `https://open.izhixue.cn/resource/web/url`,
                     type: "get",
@@ -141,13 +142,18 @@ export function initHook() {
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
+                        console.log(GM);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', response.data.PlayAuth, true);
                         xhr.responseType = 'arraybuffer';
-                        
+                        xhr.error = (err)=> {
+                            console.error('[Yun]', 'get Audio Fail', err);
+                        }
                         xhr.onload = (e)=> {
                             if (xhr.status == 200) {
-                                super.send(xhr.response);
+                                for (let i = 0; i < xhr.response.byteLength; i+=3840)
+                                    super.send(xhr.response.slice(i, i+3840));
+                                
                                 super.send(new ArrayBuffer(0));
                                 console.success('发送标准答案成功！');
                             } else {
@@ -157,8 +163,8 @@ export function initHook() {
                         
                         xhr.send();
                     },
-                    error: (xhr)=> {
-                        console.error('[Yun]', 'get Audio Fail');
+                    error: (err)=> {
+                        console.error('[Yun]', 'get Audio Info Fail', err);
                     }
                 });
                 this.doing_topic = undefined;

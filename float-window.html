@@ -9,7 +9,7 @@
 <body>
     <div class="yunPanel">
         <div class="close">x</div>
-        <h1 style="text-align: center;font-size: medium;">视听说 - 自动答题</h1>
+        <h1 style="text-align: center;font-size: medium;" class="grabber">视听说 - 自动答题</h1>
         <hr>
         <h2 style="font-size: small;">自动完成题型：</h2>
         <p>
@@ -52,6 +52,11 @@
     </div>
 </body>
 <style>
+    .yunPanel .grabber {
+        cursor: grab;
+        user-select: none;
+    }
+
     .yunPanel input[type="checkbox"] {
         margin-left: 10px;
     }
@@ -88,4 +93,23 @@
         color: #00000088
     }
 </style>
+
+<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    let draging = false, pos = {x: 0, y: 0}, last_pos = {x: 0, y: 0};
+
+    $(document).mousemove((e)=>{
+        if(draging) {
+            pos.x += e.pageX - last_pos.x;
+            pos.y += e.pageY - last_pos.y;
+            $('.yunPanel').css('transform', `translateX(${pos.x}px) translateY(${pos.y}px)`);
+        }
+        last_pos.x = e.pageX;
+        last_pos.y = e.pageY;
+    });
+
+    $('.grabber').mousedown((e)=>{ draging = true; });
+    $(document).mouseup(()=>{ draging = false; });
+
+</script>
 </html>

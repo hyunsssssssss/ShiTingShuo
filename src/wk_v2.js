@@ -10,7 +10,7 @@ async function doTopic() {
     let setTixing = async (t)=> {
         console.log('[+] 题型:', t);
         $('#yun_status').text('当前题型：'+t);
-    }; 
+    };
 
     if($('.wy-course-bottom .wy-course-btn-right .wy-btn').text().indexOf('Submit')==-1 && $('#J_prismPlayer').length==0) {
         // $('.page-next')[1].click();
@@ -81,7 +81,7 @@ async function doLoop() {
         console.log('[*]', '已完成，切换下一题。。。');
         await sleep(submitDelay);
         $('.page-next')[1].click()
-        await sleep(pageNextDelay); 
+        await sleep(pageNextDelay);
     }
     $('.yunPanel button').prop('disabled', false);
     $('.yunPanel button').removeClass('is-disabled');
@@ -101,7 +101,7 @@ function pageFullyLoaded () {
     $(document.body).after(`
     <div class="yunPanel">
         <div class="close">x</div>
-        <h1 style="text-align: center;font-size: medium;">视听说 - 自动答题</h1>
+        <h1 style="text-align: center;font-size: medium;" class="grabber">视听说 - 自动答题</h1>
         <hr>
         <h2 style="font-size: small;">自动完成题型：</h2>
         <p>
@@ -144,6 +144,23 @@ function pageFullyLoaded () {
     </div>
     `);
 
+    // 窗口拖动
+    let draging = false, pos = {x: 0, y: 0}, last_pos = {x: 0, y: 0};
+
+    $(document).mousemove((e)=>{
+        if(draging) {
+            pos.x += e.pageX - last_pos.x;
+            pos.y += e.pageY - last_pos.y;
+            $('.yunPanel').css('transform', `translateX(${pos.x}px) translateY(${pos.y}px)`);
+        }
+        last_pos.x = e.pageX;
+        last_pos.y = e.pageY;
+    });
+
+    $('.grabber').mousedown((e)=>{ draging = true; });
+    $(document).mouseup(()=>{ draging = false; });
+
+    // 按钮事件
     $('#yun_start').click(()=>{
         if($('#yun_start').text()=='开始') {
             $('#yun_doone').prop('disabled', true);
