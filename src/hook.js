@@ -3,7 +3,6 @@ import { text_to_mp3 } from './utils'
 let uploadToken, recordDetail;
 
 export function initHook() {
-    unsafeWindow['sss'] = text_to_mp3;
     // Hook 播放器
     let ori_create_player = unsafeWindow['Aliplayer'];
     Object.defineProperty(unsafeWindow, 'Aliplayer', {
@@ -142,7 +141,6 @@ export function initHook() {
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
-                        console.log(GM);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', response.data.PlayAuth, true);
                         xhr.responseType = 'arraybuffer';
