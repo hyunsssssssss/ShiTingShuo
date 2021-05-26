@@ -507,6 +507,14 @@ function initHook() {
                 let json = JSON.parse(data);
                 if('request' in json && json.request.refText) {
                     if(user_config.autorecord) json.audio.audioType = 'mp3';
+                    if(!recordDetail.sentItems && recordDetail?.exerciseList[0]?.sentItems) {
+                        recordDetail.sentItems = [];
+                        for (const exercise of recordDetail.exerciseList) {
+                            exercise.sentItems.forEach((item)=>{
+                                recordDetail.sentItems.push(item);
+                            });
+                        }
+                    }
                     for (const item of recordDetail.sentItems) {
                         if(item.text.replace(/[ \\.!,'\\?]/g, '').toLowerCase() == json.request.refText.replace(/[ \\.!,'\\?]/g, '').toLowerCase()) {
                             this.doing_topic = item;
