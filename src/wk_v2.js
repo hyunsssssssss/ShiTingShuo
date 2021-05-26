@@ -28,6 +28,9 @@ async function doTopic() {
     } else if($('.lib-fill-blank-do-input-left').length!=0 && user_config.autodo.includes('auto_tiankong')) {
         await setTixing('填空');
         await DOM.doTianKone();
+    } else if($('.lib-single-item-img img[src="assets/exercise/no-choices.png"]').length!=0 && user_config.autodo.includes('auto_duoxuan')) {
+        await setTixing('多选');
+        await DOM.doMutiChoose();
     } else if($('.lib-single-item-img').length!=0 && user_config.autodo.includes('auto_danxuan')) {
         await setTixing('单选');
         await DOM.doSingleChoose();
@@ -115,6 +118,8 @@ function pageFullyLoaded () {
             <label for="auto_roleplay">角色扮演</label>
             <input type="checkbox" id="auto_danxuan">
             <label for="auto_danxuan">单项选择</label>
+            <input type="checkbox" id="auto_duoxuan">
+            <label for="auto_duoxuan">多项选择</label>
             <input type="checkbox" id="auto_dropchoose">
             <label for="auto_dropchoose">下拉选择</label>
             <input type="checkbox" id="auto_drag">

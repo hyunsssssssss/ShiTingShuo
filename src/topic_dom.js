@@ -184,6 +184,7 @@ export async function doDrag() {
     await sleep(inputDelay);
 }
 
+// 视频
 export async function doVideo() {
     await sleep(2000);
 
@@ -196,6 +197,33 @@ export async function doVideo() {
     await sleep(1000);
     player.seek(player.getDuration() - 5);
     await sleep(8000);
+}
+
+// 多选
+export async function doMutiChoose() {
+    let answer_map = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7, 'I':8, 'J':9}
+
+    // 随机选择以获得正确答案
+    $('.lib-single-item-img img').click()
+    
+    await sleep(inputDelay);
+    click_btn(); // Submit
+    await sleep(submitDelay);
+
+    let answer = []
+    $('.lib-single-cs-answer').each((i,item)=>{
+        answer.push(item.innerText)
+    });
+
+    click_btn(); // Retry
+    await sleep(submitDelay);
+
+    $('.lib-single-box').each((i,item)=>{
+        for(const answer_single of answer[i])
+            $($(item).find('.lib-single-item')[answer_map[answer_single]]).find('img').click()
+    });
+
+    await sleep(inputDelay);
 }
 
 // 不支持体型

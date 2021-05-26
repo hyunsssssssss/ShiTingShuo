@@ -3,7 +3,7 @@ const submitDelay = 3000;       // Submit 之后的等待时间
 const pageNextDelay = 5000;     // 换页 之后的等待时间
 const inputDelay = 500;         // 输入 之后的等待时间
 
-const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag', 'auto_video'];
+const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag', 'auto_video', 'auto_duoxuan'];
 let user_config = {
     'autodo': allauto,
     'autotryerr': true,

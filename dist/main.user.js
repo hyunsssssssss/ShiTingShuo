@@ -29,7 +29,7 @@ module.exports = "@charset \"UTF-8\";.el-pagination--small .arrow.disabled,.el-t
 /***/ 987:
 /***/ ((module) => {
 
-module.exports = ".yunPanel .grabber {\r\n    cursor: grab;\r\n    user-select: none;\r\n}\r\n\r\n.yunPanel input[type=\"checkbox\"] {\r\n    margin-left: 10px;\r\n}\r\n\r\n.yunPanel h3,.yunPanel input,.yunPanel label {\r\n    font-size: smaller\r\n}\r\n\r\n.yunPanel p {\r\n    margin: 10px 0\r\n}\r\n\r\n.yunPanel {\r\n    padding: 10px 20px;\r\n    position: fixed;\r\n    top: 100px;\r\n    right: 150px;\r\n    height: 420px;\r\n    width: 200px;\r\n    border: 1px solid #000;\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n    z-index: 9999;\r\n    border-radius: 6px;\r\n}\r\n\r\n.yunPanel .close {\r\n    position: absolute;\r\n    cursor: pointer;\r\n    top: 8px;\r\n    right: 10px\r\n}\r\n\r\n.yunPanel .close:hover {\r\n    color: #00000088\r\n}";
+module.exports = ".yunPanel .grabber {\r\n    cursor: grab;\r\n    user-select: none;\r\n}\r\n\r\n.yunPanel input[type=\"checkbox\"] {\r\n    margin-left: 10px;\r\n}\r\n\r\n.yunPanel h3,.yunPanel input,.yunPanel label {\r\n    font-size: smaller\r\n}\r\n\r\n.yunPanel p {\r\n    margin: 10px 0\r\n}\r\n\r\n.yunPanel {\r\n    padding: 10px 20px;\r\n    position: fixed;\r\n    top: 100px;\r\n    right: 150px;\r\n    width: 200px;\r\n    border: 1px solid #000;\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n    z-index: 9999;\r\n    border-radius: 6px;\r\n}\r\n\r\n.yunPanel .close {\r\n    position: absolute;\r\n    cursor: pointer;\r\n    top: 8px;\r\n    right: 10px\r\n}\r\n\r\n.yunPanel .close:hover {\r\n    color: #00000088\r\n}";
 
 /***/ })
 
@@ -301,7 +301,7 @@ const submitDelay = 3000;       // Submit 之后的等待时间
 const pageNextDelay = 5000;     // 换页 之后的等待时间
 const inputDelay = 500;         // 输入 之后的等待时间
 
-const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag', 'auto_video'];
+const allauto = ['auto_tiankong', 'auto_luyin', 'auto_lytk', 'auto_roleplay', 'auto_danxuan', 'auto_dropchoose', 'auto_drag', 'auto_video', 'auto_duoxuan'];
 let user_config = {
     'autodo': allauto,
     'autotryerr': true,
@@ -723,6 +723,7 @@ async function doDrag() {
     await sleep(inputDelay);
 }
 
+// 视频
 async function doVideo() {
     await sleep(2000);
 
@@ -735,6 +736,33 @@ async function doVideo() {
     await sleep(1000);
     player.seek(player.getDuration() - 5);
     await sleep(8000);
+}
+
+// 多选
+async function doMutiChoose() {
+    let answer_map = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7, 'I':8, 'J':9}
+
+    // 随机选择以获得正确答案
+    $('.lib-single-item-img img').click()
+    
+    await sleep(inputDelay);
+    click_btn(); // Submit
+    await sleep(submitDelay);
+
+    let answer = []
+    $('.lib-single-cs-answer').each((i,item)=>{
+        answer.push(item.innerText)
+    });
+
+    click_btn(); // Retry
+    await sleep(submitDelay);
+
+    $('.lib-single-box').each((i,item)=>{
+        for(const answer_single of answer[i])
+            $($(item).find('.lib-single-item')[answer_map[answer_single]]).find('img').click()
+    });
+
+    await sleep(inputDelay);
 }
 
 // 不支持体型
@@ -776,6 +804,9 @@ async function doTopic() {
     } else if($('.lib-fill-blank-do-input-left').length!=0 && user_config.autodo.includes('auto_tiankong')) {
         await setTixing('填空');
         await doTianKone();
+    } else if($('.lib-single-item-img img[src="assets/exercise/no-choices.png"]').length!=0 && user_config.autodo.includes('auto_duoxuan')) {
+        await setTixing('多选');
+        await doMutiChoose();
     } else if($('.lib-single-item-img').length!=0 && user_config.autodo.includes('auto_danxuan')) {
         await setTixing('单选');
         await doSingleChoose();
@@ -863,6 +894,8 @@ function pageFullyLoaded () {
             <label for="auto_roleplay">角色扮演</label>
             <input type="checkbox" id="auto_danxuan">
             <label for="auto_danxuan">单项选择</label>
+            <input type="checkbox" id="auto_duoxuan">
+            <label for="auto_duoxuan">多项选择</label>
             <input type="checkbox" id="auto_dropchoose">
             <label for="auto_dropchoose">下拉选择</label>
             <input type="checkbox" id="auto_drag">
