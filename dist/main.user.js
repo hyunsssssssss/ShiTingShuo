@@ -313,6 +313,7 @@ let user_config = {
 
 ;// CONCATENATED MODULE: ./src/hook.js
 
+
 let uploadToken, recordDetail;
 
 function initHook() {
@@ -454,12 +455,14 @@ function initHook() {
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
-                        const onload = (e)=> {
+                        const onload = async (e)=> {
                             if(!e.status && e.target) e=e.target;
                             if (e.status == 200) {
-                                for (let i = 0; i < e.response.byteLength; i+=3840)
+                                for (let i = 0; i < e.response.byteLength; i+=3840) {
                                     super.send(e.response.slice(i, i+3840));
-                                
+                                    await sleep(40);
+                                }
+                                    
                                 super.send(new ArrayBuffer(0));
                                 console.success('发送标准答案成功！');
                             } else {
@@ -583,16 +586,16 @@ async function doReadRepeat() {
             return true;
         };
     
-        let click_record = (e) => { 
+        let click_record = (e) => {
             console.log('click:', e);
             $(e).find('img[title="录音"],img[title="停止"]').click();
         }
         
-        setTimeout(()=>{click_record(div);}, sum_record*5000);
-        setTimeout(()=>{click_record(div);}, 3000 + sum_record*5000);
+        setTimeout(()=>{click_record(div);}, sum_record*7000);
+        setTimeout(()=>{click_record(div);}, 5000 + sum_record*7000);
         sum_record ++;
     });
-    await sleep(2000 + sum_record*5000)
+    await sleep(2000 + sum_record*7000)
 }
 
 // 单选题

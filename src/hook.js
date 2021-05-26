@@ -1,4 +1,5 @@
 import { user_config } from './config'
+import { sleep } from './utils'
 let uploadToken, recordDetail;
 
 export function initHook() {
@@ -140,12 +141,14 @@ export function initHook() {
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
-                        const onload = (e)=> {
+                        const onload = async (e)=> {
                             if(!e.status && e.target) e=e.target;
                             if (e.status == 200) {
-                                for (let i = 0; i < e.response.byteLength; i+=3840)
+                                for (let i = 0; i < e.response.byteLength; i+=3840) {
                                     super.send(e.response.slice(i, i+3840));
-                                
+                                    await sleep(40);
+                                }
+                                    
                                 super.send(new ArrayBuffer(0));
                                 console.success('发送标准答案成功！');
                             } else {

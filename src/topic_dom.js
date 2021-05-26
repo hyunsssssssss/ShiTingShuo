@@ -55,16 +55,16 @@ export async function doReadRepeat() {
             return true;
         };
     
-        let click_record = (e) => { 
+        let click_record = (e) => {
             console.log('click:', e);
             $(e).find('img[title="录音"],img[title="停止"]').click();
         }
         
-        setTimeout(()=>{click_record(div);}, sum_record*5000);
-        setTimeout(()=>{click_record(div);}, 3000 + sum_record*5000);
+        setTimeout(()=>{click_record(div);}, sum_record*7000);
+        setTimeout(()=>{click_record(div);}, 5000 + sum_record*7000);
         sum_record ++;
     });
-    await sleep(2000 + sum_record*5000)
+    await sleep(2000 + sum_record*7000)
 }
 
 // 单选题
