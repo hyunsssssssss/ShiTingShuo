@@ -42,7 +42,7 @@ export async function dragTo(from, to) {
     let dragBlock = $(".lib-drag-block");
     dragBlock.scrollTop(to.offsetTop - dragBlock[0].offsetTop);
     $(document).scrollTop(dragBlock[0].offsetTop);
-    await sleep(100);
+    await sleep(200);
     mouseEvent(from, 'mousedown');
     await sleep(100);
     mouseEvent(to, 'mousemove');

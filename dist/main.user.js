@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        清华社视听说 - 自动答题
-// @version     0.4.3
+// @version     0.4.4
 // @author      Hyun
 // @description 解放你的双手
 // @include     *://www.tsinghuaelt.com/*
@@ -107,7 +107,7 @@ async function dragTo(from, to) {
     let dragBlock = $(".lib-drag-block");
     dragBlock.scrollTop(to.offsetTop - dragBlock[0].offsetTop);
     $(document).scrollTop(dragBlock[0].offsetTop);
-    await sleep(100);
+    await sleep(200);
     mouseEvent(from, 'mousedown');
     await sleep(100);
     mouseEvent(to, 'mousemove');
@@ -674,14 +674,20 @@ async function doDrag() {
     click_btn(); // Retry
     await sleep(submitDelay);
 
+    let flag = []; // 保证每个托快只被托一次
     answerbox = $('.lib-drag-answer-list');
     boxes = $('.lib-drag-box');
     for(let i=0; i<answerbox.length; i++) {
-        for(const box of boxes) {
-            if(answer[i]!=undefined && answer[i].includes($(box).find('span')[0].innerText)) {
-                await dragTo(box, answerbox[i]);
+        let dict = {}; // 保证每个 answerbox 不会有重复
+        for (let j = 0; j < boxes.length; j++) {
+            const text = $(boxes[j]).find('span')[0].innerText;
+            if(flag[j] || dict[text]) continue;
+
+            if(answer[i]!=undefined && answer[i].includes(text)) {
+                dict[text] = true, flag[j] = true;
+                await dragTo(boxes[j], answerbox[i]);
             }
-        };
+        }
     };
 
     await sleep(inputDelay);
