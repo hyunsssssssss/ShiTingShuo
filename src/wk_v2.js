@@ -209,6 +209,5 @@ function pageFullyLoaded () {
         });
     });
     
-
     initConf();
 }

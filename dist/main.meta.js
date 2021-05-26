@@ -9,6 +9,8 @@
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.deleteValue
+// @grant       GM_xmlhttpRequest
 // @icon        https://www.tsinghuaelt.com/favicon.ico
 // @require     https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js
+// @connect     *
 // ==/UserScript==

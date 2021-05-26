@@ -33,14 +33,15 @@ module.exports = {
                 name: '清华社视听说 - 自动答题',
                 include: ['*://www.tsinghuaelt.com/*'],
                 "run-at": 'document-start',
-                grant: ['GM.addStyle', 'GM.setValue', 'GM.getValue', 'GM.deleteValue'],
+                grant: ['GM.addStyle', 'GM.setValue', 'GM.getValue', 'GM.deleteValue', 'GM_xmlhttpRequest'],
                 version: data.version,
                 description: '解放你的双手',
                 author: 'Hyun',
                 icon: 'https://www.tsinghuaelt.com/favicon.ico',
                 require: [
                     'https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js'
-                ]
+                ],
+                connect: ['*']
             }},
             proxyScript: {
                 baseUrl: 'https://localhost:9000',

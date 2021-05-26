@@ -1,5 +1,4 @@
 import { user_config } from './config'
-import { text_to_mp3 } from './utils'
 let uploadToken, recordDetail;
 
 export function initHook() {
@@ -141,26 +140,44 @@ export function initHook() {
                         resourceId: this.doing_topic.audio
                     },
                     success: (response)=> {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('GET', response.data.PlayAuth, true);
-                        xhr.withCredentials = false;
-                        xhr.responseType = 'arraybuffer';
-                        xhr.error = (err)=> {
-                            console.error('[Yun]', 'get Audio Fail', err);
-                        }
-                        xhr.onload = (e)=> {
-                            if (xhr.status == 200) {
-                                for (let i = 0; i < xhr.response.byteLength; i+=3840)
-                                    super.send(xhr.response.slice(i, i+3840));
+                        const onload = (e)=> {
+                            if(!e.status && e.target) e=e.target;
+                            if (e.status == 200) {
+                                for (let i = 0; i < e.response.byteLength; i+=3840)
+                                    super.send(e.response.slice(i, i+3840));
                                 
                                 super.send(new ArrayBuffer(0));
                                 console.success('发送标准答案成功！');
                             } else {
-                                console.error('[Yun]', 'Wtf?', xhr.status);
+                                console.error('[Yun]', 'Wtf?', e);
                             }
                         };
-                        
-                        xhr.send();
+                        const error = (err)=> {
+                            console.error('[Yun]', 'get Audio Fail', err);
+                            super.send(new ArrayBuffer(0));
+                        };
+                        const fallback = (err)=> {
+                            console.error('尝试使用 GM_xmlhttpRequest 失败:', err);
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', response.data.PlayAuth, true);
+                            xhr.withCredentials = false;
+                            xhr.responseType = 'arraybuffer';
+                            xhr.onerror = error;
+                            xhr.onload = onload;
+                            xhr.send();
+                        }
+                        try {
+                            window.GM_xmlhttpRequest({
+                                method: 'GET',
+                                url: response.data.PlayAuth,
+                                onload: onload,
+                                onerror: fallback,
+                                onabort: fallback,
+                                responseType: 'arraybuffer'
+                            });
+                        } catch (err) {
+                            fallback(err);
+                        }
                     },
                     error: (err)=> {
                         console.error('[Yun]', 'get Audio Info Fail', err);
