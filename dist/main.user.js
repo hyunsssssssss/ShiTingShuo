@@ -667,7 +667,7 @@ async function doRolePlay() {
     $('.lib-role-select-item img')[0].click()
     $('.lib-role-select-start button').click()
 
-    await sleep(80000);
+    await sleep(120000);
 }
 
 // 听力/图片填空
